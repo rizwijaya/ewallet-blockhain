@@ -79,3 +79,25 @@ func (h *walletHandler) Deposite(c *gin.Context) {
 	response := apiResponse.APIResponse("Successfully to deposit", http.StatusOK, "success", deposite)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *walletHandler) Withdraw(c *gin.Context) {
+	amount := c.Param("amount")
+	am, _ := strconv.Atoi(amount)
+	var v map[string]interface{}
+	//privateKey := c.Request.Header
+	err := json.NewDecoder(c.Request.Body).Decode(&v)
+	if err != nil {
+		response := apiResponse.APIResponse("Failed wallet address", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	auth := blockhain.GetAccountAuth(blockhain.Connect(), v["privateKey"].(string))
+	withdraw, err := h.walletService.Withdraw(am, auth)
+	if err != nil {
+		response := apiResponse.APIResponse("Failed to Withdraw", http.StatusBadRequest, "error", err)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := apiResponse.APIResponse("Successfully to Withdraw", http.StatusOK, "success", withdraw)
+	c.JSON(http.StatusOK, response)
+}

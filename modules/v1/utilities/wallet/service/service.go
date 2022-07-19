@@ -14,6 +14,7 @@ type Service interface {
 	GetBalance() (*big.Int, error)
 	GetMyWallet() (common.Address, error)
 	Deposite(amount int, key *bind.TransactOpts) (*types.Transaction, error)
+	Withdraw(amount int, key *bind.TransactOpts) (*types.Transaction, error)
 }
 
 type service struct {
@@ -47,4 +48,12 @@ func (s *service) Deposite(amount int, key *bind.TransactOpts) (*types.Transacti
 		return deposit, err
 	}
 	return deposit, nil
+}
+
+func (s *service) Withdraw(amount int, key *bind.TransactOpts) (*types.Transaction, error) {
+	withdraw, err := s.blockhain.Withdrawl(key, big.NewInt(int64(amount)))
+	if err != nil {
+		return withdraw, err
+	}
+	return withdraw, nil
 }
