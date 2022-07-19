@@ -1,4 +1,4 @@
-package api
+package api_response
 
 type Response struct {
 	Meta Meta        `json:"meta"`

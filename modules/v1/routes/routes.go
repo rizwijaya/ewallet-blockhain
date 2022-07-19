@@ -1,7 +1,9 @@
 package routes
 
 import (
+	"ewallet-blockhain/app/blockhain"
 	"ewallet-blockhain/app/config"
+	walletHandlerV1 "ewallet-blockhain/modules/v1/utilities/wallet/handler"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -17,17 +19,12 @@ func ParseTmpl(router *gin.Engine) *gin.Engine { //Load HTML Template
 }
 
 func Init(db *gorm.DB, conf config.Conf, router *gin.Engine) *gin.Engine {
-	// productHandlerV1 := productHandlerV1.Handler(db)
-	// productViewV1 := productviewV1.View(db)
-	//blockhain := blockhain.Init(conf)
-
-	// Routing Website Service
-	//product := router.Group("/product", basic.Auth(conf))
-	//product.GET("/", productViewV1.Index)
+	blockhain := blockhain.Init(conf)
+	walletHandlerV1 := walletHandlerV1.Handler(db, blockhain)
 
 	//Routing API Service
 	api := router.Group("/api/v1")
-	//api.GET("/product", productHandlerV1.ListProduct)
+	api.GET("/balance", walletHandlerV1.GetBalance)
 
 	router = ParseTmpl(router)
 	return router
