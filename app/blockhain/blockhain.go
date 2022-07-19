@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log"
 	"math/big"
-	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -16,7 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func getAccountAuth(client *ethclient.Client, privateKeyAddress string) *bind.TransactOpts {
+func GetAccountAuth(client *ethclient.Client, privateKeyAddress string) *bind.TransactOpts {
 	privateKey, err := crypto.HexToECDSA(privateKeyAddress)
 	if err != nil {
 		log.Fatal(err)
@@ -27,10 +26,10 @@ func getAccountAuth(client *ethclient.Client, privateKeyAddress string) *bind.Tr
 	if !ok {
 		log.Fatal("Invalid key")
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	//defer cancel()
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := client.PendingNonceAt(ctx, fromAddress)
+	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,14 +49,18 @@ func getAccountAuth(client *ethclient.Client, privateKeyAddress string) *bind.Tr
 	auth.GasPrice = big.NewInt(1000000)
 	return auth
 }
-
-func Init(conf config.Conf) *api.Api {
+func Connect() *ethclient.Client {
+	conf, _ := config.Init()
 	client, err := ethclient.Dial(conf.Blockhain.Host + ":" + conf.Blockhain.Port)
 	if err != nil {
 		log.Fatal(err)
 	}
+	return client
+}
 
-	auth := getAccountAuth(client, conf.Blockhain.Secret_key)
+func Init(conf config.Conf) *api.Api {
+	client := Connect()
+	auth := GetAccountAuth(client, conf.Blockhain.Secret_key)
 
 	address, tx, instance, err := api.DeployApi(auth, client)
 	if err != nil {

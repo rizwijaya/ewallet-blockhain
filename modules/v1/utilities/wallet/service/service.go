@@ -7,11 +7,13 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 type Service interface {
 	GetBalance() (*big.Int, error)
 	GetMyWallet() (common.Address, error)
+	Deposite(amount int, key *bind.TransactOpts) (*types.Transaction, error)
 }
 
 type service struct {
@@ -37,4 +39,12 @@ func (s *service) GetMyWallet() (common.Address, error) {
 		return mywallet, err
 	}
 	return mywallet, nil
+}
+
+func (s *service) Deposite(amount int, key *bind.TransactOpts) (*types.Transaction, error) {
+	deposit, err := s.blockhain.Deposite(key, big.NewInt(int64(amount)))
+	if err != nil {
+		return deposit, err
+	}
+	return deposit, nil
 }

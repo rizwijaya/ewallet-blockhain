@@ -26,6 +26,7 @@ func Init(db *gorm.DB, conf config.Conf, router *gin.Engine) *gin.Engine {
 	api := router.Group("/api/v1")
 	api.GET("/balance", walletHandlerV1.GetBalance)
 	api.GET("/mywallet", walletHandlerV1.GetMyWallet)
+	api.POST("/deposite/:amount", walletHandlerV1.Deposite)
 
 	router = ParseTmpl(router)
 	return router
