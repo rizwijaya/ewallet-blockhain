@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -26,9 +27,13 @@ func getAccountAuth(client *ethclient.Client, privateKeyAddress string) *bind.Tr
 	if !ok {
 		log.Fatal("Invalid key")
 	}
-
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := client.PendingNonceAt(nil, fromAddress)
+	nonce, err := client.PendingNonceAt(ctx, fromAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println("nounce= ", nonce)
 	chainID, err := client.ChainID(context.Background())
 	if err != nil {

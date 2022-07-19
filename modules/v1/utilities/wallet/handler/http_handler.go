@@ -39,6 +39,18 @@ func (h *walletHandler) GetBalance(c *gin.Context) {
 		return
 	}
 
-	response := apiResponse.APIResponse("Successfully get Balance", http.StatusOK, "success", balance)
+	response := apiResponse.APIResponse("Successfully get Balance", http.StatusOK, "success", `{"balance": "`+balance.String()+`"}`)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *walletHandler) GetMyWallet(c *gin.Context) {
+	mywallet, err := h.walletService.GetMyWallet()
+	if err != nil {
+		response := apiResponse.APIResponse("Failed to get wallet address", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := apiResponse.APIResponse("Successfully get wallet address", http.StatusOK, "success", `{"address": "`+mywallet.String()+`"}`)
 	c.JSON(http.StatusOK, response)
 }
