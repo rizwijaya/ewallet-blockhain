@@ -1,12 +1,12 @@
 package main
 
 import (
+	"ewallet-blockhain/app/config"
+	database "ewallet-blockhain/app/databases"
+	routesV1 "ewallet-blockhain/modules/v1/routes"
+	"ewallet-blockhain/pkg/html"
+	error "ewallet-blockhain/pkg/http-error"
 	"log"
-	"smartvoting/app/config"
-	database "smartvoting/app/databases"
-	routesV1 "smartvoting/modules/v1/routes"
-	"smartvoting/pkg/html"
-	error "smartvoting/pkg/http-error"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"

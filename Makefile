@@ -29,3 +29,8 @@ clean:
 run-nodemon:
 	@echo "Running server with nodemon..."
 	nodemon --exec go run main.go
+
+sol:
+	solcjs --optimize --abi ./app/contracts/wallet.sol -o build
+	solcjs --optimize --bin ./app/contracts/wallet.sol -o build
+	abigen --abi=./build/app_contracts_wallet_sol_Wallet.abi --bin=./build/app_contracts_wallet_sol_Wallet.bin --pkg=api --out=./app/contracts/wallet.go
